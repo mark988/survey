@@ -1,0 +1,377 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>OZHouse Questionnaires</title>
+    <!-- CSS files -->
+    <link href="./dist/css/tabler.min.css?1692870487" rel="stylesheet"/>
+    <link href="./dist/css/tabler-flags.min.css?1692870487" rel="stylesheet"/>
+    <link href="./dist/css/tabler-payments.min.css?1692870487" rel="stylesheet"/>
+    <link href="./dist/css/tabler-vendors.min.css?1692870487" rel="stylesheet"/>
+    <link href="./dist/css/demo.min.css?1692870487" rel="stylesheet"/>
+    <style>
+      @import url('https://rsms.me/inter/inter.css');
+      :root {
+      	--tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+      }
+      body {
+      	font-feature-settings: "cv03", "cv04", "cv11";
+      } 
+    </style>
+
+  </head>
+  <body >
+    <!-- <script src="./dist/js/demo-theme.min.js?1692870487"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <script src="https://www.ozhousemm.com/js/sweetalert2.all.min.js"></script>
+    <script src="dist/js/common.js"></script>
+    <script>
+        //页面全局变量
+        var blue='bg-blue text-blue-fg';
+        var azure='bg-azure text-azure-fg';
+        var indigo='bg-indigo text-indigo-fg';
+
+        var purple='bg-purple text-purple-fg';
+        var pink='bg-pink text-pink-fg';
+        var red='bg-red text-red-fg';
+
+        var orange='bg-orange text-orange-fg';
+        var yellow='bg-yellow text-yellow-fg';
+        var lime='bg-lime text-lime-fg';
+
+        var green='bg-green text-green-fg';
+        var teal='bg-teal text-teal-fg';
+        var cyan='bg-cyan text-cyan-fg';
+    </script>
+    <div class="page" id="progress">
+      <!-- Navbar -->
+      <header class="navbar-expand-md"> </header>
+      <div class="page-wrapper">
+ 
+        <!-- Page body -->
+        <div class="page-body" style="margin-top:8px">
+          <div class="container-xl">
+            <div class="row row-cards" style="display: flex;justify-content: center;">
+        
+
+            <div class="col-md-12">
+              <div class="card" >
+                  <div class="card-header" style="display: flex;justify-content: center;">
+                      <h1 class="card-title">Questionnaires Result</h1>
+                  </div>
+                  <div class="card-body">
+                     
+                      <div class="mb-3 row">
+                          <label class="form-label required"> SELECT A DATE </label>
+                          <div class="row g-2">
+                            <div class="col-5">
+                                <select id="month" name="user[month]" class="form-select">
+                                     
+                                    <option value="01">01</option>
+                                </select>
+                            </div>
+                            <!-- <div class="col-4">
+                                <select name="user[year]" class="form-select">
+                                    <option value="2024" selected="selected">2024</option>
+                                </select>
+                            </div> -->
+                            <div class="col-auto">
+                                <button  class="btn btn-primary" onclick="query()"> Query </button>
+                                <!-- <button  class="btn btn-primary" onclick="generatePDF()"> Download </button> -->
+                            </div>
+                          </div>
+                      </div>
+
+                    
+                  </div>
+                  <div id="firstDiv"></div>
+                  <div class="card-body">
+                    <div class="btn-list" id="badgeCode">
+                      
+                     
+                    </div>
+                  </div>
+                  <div class="card-body" id="result" style="padding-left: 0px;padding-right: 0px; padding-top: 0px; padding-bottom: 0px; ">
+
+                  </div>
+
+                  <!-- <div class="card-footer text-end">
+                       <button id="submitBtn" type="submit" class="btn btn-primary" onclick="submitSurvey()">Submit</button>
+                  </div> -->
+                </div>
+            </div>
+          
+          </div>
+        </div>
+      </div>
+      <footer class="footer footer-transparent d-print-none">
+       
+      </footer>
+    </div>
+  </div>
+  <script src="./dist/libs/litepicker/dist/litepicker.js?1692870487" defer></script>
+
+  <!-- 页面加载数据时显示的loading -->
+  <script type="text/javascript" src="dist/js/spin.min.js" ></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.0.272/jspdf.debug.js"></script>
+  <script>
+     //页面加载数据时loading组件初始化
+     var opts = {            
+                lines: 13, // 花瓣数目
+                length: 0, // 花瓣长度
+                width: 10, // 花瓣宽度
+                radius: 30, // 花瓣距中心半径
+                corners: 1, // 花瓣圆滑度 (0-1)
+                rotate: 0, // 花瓣旋转角度
+                direction: 1, // 花瓣旋转方向 1: 顺时针, -1: 逆时针
+                color: '#0054a6', // 花瓣颜色
+                speed: 1, // 花瓣旋转速度
+                trail: 60, // 花瓣旋转时的拖影(百分比)
+                shadow: false, // 花瓣是否显示阴影
+                hwaccel: false, //spinner 是否启用硬件加速及高速旋转            
+                className: 'spinner', // spinner css 样式名称
+                zIndex: 2e9, // spinner的z轴 (默认是2000000000)
+                top: '50%', // spinner 相对父容器Top定位 单位 px
+                left: 'auto'// spinner 相对父容器Left定位 单位 px
+     };
+     var spinner = new Spinner(opts);
+
+     function queryByParticipantsOnSuccess(response) {
+        let code = response.code;
+        let timesArray = response.data.survey;
+        let name  = response.data.name;
+        let opDate = response.data.opDate;
+        if(code==0){
+             //关闭spinner  
+            spinner.spin();
+
+            $("#result").empty();
+            
+            let  timesArrSize = timesArray.length;
+           
+            let  totalDivCode="";
+            //let headHtml = " <thead> <tr><th colspan=3>Name:"+name+"</th><th colspan=4>Review Date:"+opDate+"</th></tr></thead>";
+            let headHtml = " <thead> <tr><th></th><th colspan=3 style='color:black;font-size:14px;font-weight: 600;text-align: right;'>Name:&nbsp;"+name+"</th><th colspan=7 style='color:black;font-size:14px;font-weight: 600;'>Review Date:&nbsp;"+opDate+"</th><th ></th></tr></thead>";
+            let divCode="<div class='col-12'><div class='card' > <div class='table-responsive'> <table id='card' class='table'>"+headHtml+"<tbody>";
+            let tbodyHtml = "";
+            let aTotal = 0;
+            let bTotal = 0;
+            let cTotal = 0;
+            let dTotal = 0;
+            let eTotal = 0;
+
+            for(var k =0 ;k<timesArrSize;k++){
+                let dataArray = timesArray[k];
+                let title =  dataArray.title;
+                let title_ks =  dataArray.title_ks;
+                let content =  dataArray.answer;
+                let newArray = assemble(content);
+                let a=newArray[0];
+                let b=newArray[1];
+                let c=newArray[2];
+                let d=newArray[3];
+                let e=newArray[4];
+                aTotal = aTotal + Number((a.split("-"))[0]);
+                bTotal = bTotal + Number((b.split("-"))[0]);
+                cTotal = cTotal + Number((c.split("-"))[0]);
+                dTotal = dTotal + Number((d.split("-"))[0]);
+                eTotal = eTotal + Number((e.split("-"))[0]);
+                 
+      
+                tbodyHtml= tbodyHtml+ "<tr><td colspan=12>"+title+"</br>"+title_ks+"</td></tr>"+
+                                      "<tr><td style='padding-left:5px;padding-right: 0px;width:0px'></td><td style='width:100px'>"+a+"</td><td>"+b+"</td><td>"+c+"</td><td>"+d+"</td><td>"+e+"</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+          }
+
+          tbodyHtml= tbodyHtml+ "<tr><td style='padding-left:5px;padding-right: 0px;width:0px'></td><td style='width:100px'>"+aTotal+"</td><td>"+bTotal+"</td><td>"+cTotal+"</td><td>"+dTotal+"</td><td>"+eTotal+"</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+          tbodyHtml= tbodyHtml+ "<tr><td style='padding-left:5px;padding-right: 0px;width:0px'>Mark</td><td style='color:red;font-weight: 600;'>5</td><td style='color:red;font-weight: 600;'>4</td><td style='color:red;font-weight: 600;'>3</td><td style='color:red;font-weight: 600;'>2</td><td style='color:red;font-weight: 600;'>1</td><td style='width:0px;padding-left: 0px;padding-right: 0px;'></td><td></td><td></td><td></td><td></td><td></td></tr>";
+          let aScore =  (aTotal*5);
+          let bScore =  (bTotal*4);
+          let cScore =  (cTotal*3);
+          let dScore =  (dTotal*2);
+          let eScore =  (eTotal*1);
+          let totalScore = aScore + bScore + cScore + dScore + eScore;
+          tbodyHtml= tbodyHtml+ "<tr><td style='padding-left:5px;padding-right: 0px;width:0px;font-size:18px;font-weight: 800;'>Total</td><td style='font-weight: 800;'>"+aScore+"</td><td style='font-weight: 800;'>"+bScore+"</td><td style='font-weight: 800;'>"+cScore+"</td><td style='font-weight: 800;'>"+dScore+"</td><td style='font-weight: 800;'>"+eScore+"</td><td style='font-size:18px;font-weight: 800;'>"+totalScore+"</td></tr>";
+
+          divCode = divCode +tbodyHtml+"</tbody></table></div></div></div>";
+        
+          $("#result").append(divCode);
+
+          
+          $(".col-12").addClass("col-12");
+          $(".card").addClass("card");
+          $(".table-responsive").addClass("table-responsive");
+          $(".table").addClass("table table-vcenter card-table");
+          
+
+          // $(".row").addClass("row");
+          // $(".form-label").addClass("form-label required");
+          // $(".form-check").addClass("form-check form-check-inline");
+          // $(".form-check-input").addClass("form-check-input");
+          // $(".form-check-label").addClass("form-check-label");
+
+          $(".badge-pill").addClass("spanBadge badge bg-indigo text-indigo-fg badge-notification badge-pill");
+         
+        }
+     }  
+     function queryByMonthOnSuccess(response) {
+          let code = response.code;
+          let dataArray = response.data;
+          let badgeCode = "";
+          if(code==0){
+              //关闭spinner  
+              spinner.spin();
+              $("#badgeCode").empty();
+              let  arrSize = dataArray.length;
+              if(arrSize==0){
+                  $("#badgeCode").append("There is no questionnaire information for this month.");
+              }
+              for(var i=0;i<arrSize;i++){
+                  let fullName = dataArray[i].fullName;
+                  let omitName = dataArray[i].omitName;
+                  let cc = dataArray[i].cc;
+                  badgeCode = badgeCode + "<button onclick='getSurveyResult(this)' value='"+fullName+"' class='btn-position-relative' style='--tblr-btn-font-size: 0.8rem;'>"+omitName+"<span class='spanBadge'>"+cc+"</span></button>";
+              }
+              $("#badgeCode").append(badgeCode);
+              $(".btn-position-relative").addClass("btn position-relative");
+              $(".spanBadge").addClass("badge bg-indigo text-indigo-fg badge-notification badge-pill");
+          }
+     }
+     function onError(jqXHR, textStatus, errorThrown) {
+          alert("错误："+textStatus);
+     }
+     $('#month').change(function() {  
+         var selectedValue = $(this).val(); // 使用 $(this) 引用当前的 <select> 元素
+     }); 
+     function query(){
+         
+         $("#result").empty();
+        
+         let month = $('#month option:selected').val();
+
+         //$("#firstDiv").text("");
+         var target = $("#firstDiv").get(0);
+         spinner.spin(target); 
+
+         ajaxRequest("GET", server+"/surveyResult/participants-yg?yearMonth="+getCurrentYear()+"-"+month, null, true, queryByMonthOnSuccess, onError);
+         
+     }
+
+  </script>
+  <script>
+
+    function loadData(yearMonth,participants){
+         //$("#firstDiv").text("");
+         var target = $("#firstDiv").get(0);
+         spinner.spin(target); 
+         ajaxRequest("GET", server+"/surveyResult/query-yg?yearMonth="+yearMonth+"&participants="+participants, null, true, queryByParticipantsOnSuccess, onError);
+    }
+   
+    function getSurveyResult(button){
+      
+
+        let participants = $(button).val();
+        let month = $('#month option:selected').val();
+        loadData('2026-'+month,participants);
+    }
+
+   
+    function assemble(str) {  
+      let emptyArray = Array(5).fill(""); 
+      let array = str.split("_");
+      let size = array.length;
+      for(var i =0;i<size;i++){
+         let tmps = array[i].toLowerCase();
+         if (tmps.includes("always")) {
+             emptyArray[0]=array[i];
+         }
+         if (tmps.includes("ususally")) {
+             emptyArray[1]=array[i];
+         }
+         if (tmps.includes("sometimes")) {
+             emptyArray[2]=array[i];
+         }
+         if (tmps.includes("rarely")) {
+             emptyArray[3]=array[i];
+         }
+         if (tmps.includes("never")) {
+             emptyArray[4]=array[i];
+         }
+      }
+      let lowStr = str.toLowerCase();
+      // 检查字符串是否包含"always"  
+      if (!lowStr.includes("always")) {  
+        // 如果不包含，则将"always"附加到字符串末尾  
+        //return str + " always";  
+        emptyArray[0]="0-Always"
+      }  
+      if (!lowStr.includes("ususally")) {  
+        // 如果不包含，则将"always"附加到字符串末尾  
+        //return str + " always";  
+        emptyArray[1]="0-Ususally"
+      } 
+      if (!lowStr.includes("sometimes")) {  
+        // 如果不包含，则将"always"附加到字符串末尾  
+        //return str + " always";  
+        emptyArray[2]="0-Sometimes"
+      } 
+      if (!lowStr.includes("rarely")) {  
+        // 如果不包含，则将"always"附加到字符串末尾  
+        //return str + " always";  
+        emptyArray[3]="0-Rarely"
+      } 
+      if (!lowStr.includes("never")) {  
+        // 如果不包含，则将"always"附加到字符串末尾  
+        //return str + " always";  
+        emptyArray[4]="0-Never"
+      } 
+      // 如果包含，则返回原字符串  
+      return emptyArray;  
+    }  
+
+
+    function generatePDF() {
+
+      // Get the HTML content
+      var element = document.getElementById('card');
+
+      // Convert the HTML content to Canvas
+      html2canvas(element).then(function(canvas) {
+          // var imgData = canvas.toDataURL('image/png');
+          // var doc = new jsPDF();
+          // doc.addImage(imgData, 'PNG', 3, 3);
+          // doc.save("result.pdf");
+          var imgData = canvas.toDataURL('image/png');
+          var doc = new jsPDF('p', 'mm', 'a4'); // 设置页面方向和单位
+          var imgWidth = canvas.width / 2.54; // 转换像素到毫米，2.54是每英寸毫米数
+          var imgHeight = canvas.height / 2.54;
+          var pageHeight = doc.internal.pageSize.height;
+          var pageWidth = doc.internal.pageSize.width;
+
+          // 计算页面上的实际高度
+          var pdfHeight = Math.min(imgHeight, pageHeight - 10); // 减去页眉和页脚的空间
+
+          var img = new Image();
+          img.src = imgData;
+          img.onload = function() {
+              var yPos = 0;
+              while (yPos < imgHeight) {
+                  doc.addImage(imgData, 'PNG', 5, yPos, imgWidth, pdfHeight);
+                  yPos += pdfHeight;
+                  if (yPos < imgHeight) {
+                      doc.addPage();
+                  }
+              }
+              doc.save('Test.pdf');
+          };
+      });
+   }
+  </script>
+  
+  <script src="./dist/js/tabler.min.js?1692870487" defer></script>
+</body>
+</html>

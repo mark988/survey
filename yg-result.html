@@ -81,17 +81,11 @@
               </div>
               <div class="card-body">
                 <div class="mb-3 row">
-                  <label class="form-label required">SELECT A DATE</label>
-                  <div class="row g-2">
-                    <div class="col-5">
-                      <select id="month" name="user[month]" class="form-select">
-                        <option value="01">01</option>
-                        <option value="02">02</option>
-                        <option value="03">03</option>
-                      </select>
-                    </div>
+                  
+                  <div class="row g-2" style="display: flex; justify-content: right;">
+                     
                     <div class="col-auto">
-                      <button class="btn btn-primary" onclick="query()">Query</button>
+                     
                       <button class="btn btn-danger" onclick="deleteSurveyResult()">Delete</button>
                     </div>
                   </div>
@@ -128,6 +122,9 @@
   let questionNum = 0;
   let submitting = false;
   let selectedParticipant = null;
+
+  const now = new Date();
+  const currentMonth = String(now.getMonth()+1).padStart(2,'0');
 
   const spinner = new Spinner({
     lines: 13, length: 0, width: 10, radius: 30,
@@ -199,8 +196,9 @@
     $("#badgeCode button").removeClass("selected-participant btn-primary").addClass("btn-secondary").removeClass("btn-secondary");
     $(button).addClass("selected-participant btn-primary");
 
-    let month = $('#month').val();
-    loadData('2026-'+month, selectedParticipant);
+    //let month =  currentMonth; // $('#month').val();
+    let yearMonthParam= getCurrentYear()+"-"+currentMonth;
+    loadData(yearMonthParam, selectedParticipant);
   }
 
   function loadData(yearMonth, participants){
@@ -208,13 +206,13 @@
     spinner.spin(target);
     ajaxRequest("GET", server+"/surveyResult/query-yg?yearMonth="+yearMonth+"&participants="+participants,null,true, queryByParticipantsOnSuccess, ()=>spinner.spin());
   }
-
+  function getCurrentYear() { return new Date().getFullYear(); }
   function query(){
     $("#result").empty();
-    let month = $('#month').val();
+    let month =currentMonth; //$('#month').val();
     let target = $("#badgeCode").get(0);
     spinner.spin(target);
-    ajaxRequest("GET", server+"/surveyResult/participants-yg?yearMonth=2026-"+month,null,true, queryByMonthOnSuccess, ()=>spinner.spin());
+    ajaxRequest("GET", server+"/surveyResult/participants-yg?yearMonth="+getCurrentYear()+"-"+month,null,true, queryByMonthOnSuccess, ()=>spinner.spin());
   }
 
   function deleteSurveyResult(){

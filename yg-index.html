@@ -1,337 +1,192 @@
 <!doctype html>
-
 <html lang="en">
-  <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>OZHouse Questionnaires</title>
-    <!-- CSS files -->
-    <link href="./dist/css/tabler.min.css?1692870487" rel="stylesheet"/>
-    <link href="./dist/css/tabler-flags.min.css?1692870487" rel="stylesheet"/>
-    <link href="./dist/css/tabler-payments.min.css?1692870487" rel="stylesheet"/>
-    <link href="./dist/css/tabler-vendors.min.css?1692870487" rel="stylesheet"/>
-    <link href="./dist/css/demo.min.css?1692870487" rel="stylesheet"/>
-    <style>
-      @import url('https://rsms.me/inter/inter.css');
-      :root {
-      	--tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
-      }
-      body {
-      	font-feature-settings: "cv03", "cv04", "cv11";
-      }
-    </style>
-    <script>
-       let questionNum = 0 ;
-    </script>
-  </head>
-  <body >
-    <!-- <script src="./dist/js/demo-theme.min.js?1692870487"></script> -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
-    <script src="dist/js/sweetalert2.all.min.js"></script>
-    <script src="dist/js/common.js"></script>
-    <div class="page">
-      <!-- Navbar -->
-      <header class="navbar-expand-md"> </header>
-      <div class="page-wrapper">
- 
-        <!-- Page body -->
-        <div class="page-body" style="margin-top:8px">
-          
-          <div class="container-xl">
-            <div class="row row-cards" style="display: flex;justify-content: center;">
-        
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>OZHouse Questionnaires</title>
 
-            <div class="col-md-12">
-              <div class="card" >
-                  <div class="card-header" style="display: flex;justify-content: center;">
-                      <h1 class="card-title">Questionnaires</h1>
-                  </div>
-                  <div class="card-body">
-                      
-                      <div class="mb-3 row">
-                            <label class="form-label">SELECT LANGUAGE</label>
-                            <select type="text" class="form-select" id="select-countries" value="">
-                               <option value="1" data-custom-properties="&lt;span class=&quot;flag flag-xs flag-country-ck&quot;&gt;&lt;/span&gt;" checked>EN</option>
-                               <option value="2" data-custom-properties="&lt;span class=&quot;flag flag-xs flag-country-mm&quot;&gt;&lt;/span&gt;">Burmese</option>
-                            </select> 
-                           
-                      </div>
-                  
-                      <div class="row">
-                          <div class="form-label required">PLEASE SELECT ONE NAME</div>
-                          
-                         
-                          <div id="employee">
-                            <!--
-                              <label class="form-check form-check-inline">
-                                  <input class="form-check-input" type="radio" value="1"  name="radios-inline"  checked>
-                                  <span class="form-check-label">Aye Thiri Kyaw</span>
-                              </label>
-                              <label class="form-check form-check-inline">
-                                  <input class="form-check-input" type="radio" value="2" name="radios-inline" >
-                                  <span class="form-check-label">Thiha Zaw</span>
-                              </label>
+  <link href="./dist/css/tabler.min.css" rel="stylesheet"/>
+  <link href="./dist/css/demo.min.css" rel="stylesheet"/>
 
-                              <label class="form-check form-check-inline">
-                                  <input class="form-check-input" type="radio" value="3" name="radios-inline" >
-                                  <span class="form-check-label">Htet Myat Aung</span>
-                              </label>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="dist/js/sweetalert2.all.min.js"></script>
+  <script src="dist/js/common.js"></script>
 
-                              <label class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" value="4" name="radios-inline" >
-                                <span class="form-check-label">Aung Aung Phyo</span>
-                              </label>
-                              <label class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" value="5"  name="radios-inline" >
-                                <span class="form-check-label">Thet Hmu Khin</span>
-                              </label>
-                            -->
-                              
-                          </div>
-                      </div>
-                      
-                      <hr style="margin: 1rem 0;">
-                      <div id="firstDiv"></div>
-                      <div class="row" id="result"></div>
-                     
-                  </div>
+  <style>
+    .mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto; /* 遮罩可阻止点击穿透 */
+    }
+    .mask-box {
+      width: 320px;
+      background: #fff;
+      padding: 24px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .hidden { display: none; }
 
-                  <div class="card-footer  text-center">
-                       <button id="submitBtn" type="submit" class="btn btn-primary" onclick="submitSurvey()">&nbsp;&nbsp; Submit &nbsp;&nbsp;</button>
-                  </div>
-                </div>
-            </div>
-          
+    /* 当页面提交中，禁用整个页面的控件 */
+    body.submitting *:not(#submit-mask) {
+      pointer-events: none; /* 禁止鼠标点击、输入 */
+      user-select: none;    /* 禁止文字选中 */
+      opacity: 0.6;         /* 页面控件半透明提示 */
+    }
+  </style>
+</head>
+
+<body>
+<div class="page">
+  <div class="page-wrapper">
+    <div class="page-body container-xl">
+      <div class="card">
+        <div class="card-header text-center">
+          <h1 class="card-title">Questionnaires</h1>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">SELECT LANGUAGE</label>
+            <select class="form-select" id="select-countries">
+              <option value="1">EN</option>
+              <option value="2">Burmese</option>
+            </select>
           </div>
+
+          <div class="mb-3">
+            <div class="form-label required">PLEASE SELECT ONE NAME</div>
+            <div id="employee"></div>
+          </div>
+
+          <hr/>
+          <div id="result"></div>
+        </div>
+        <div class="card-footer text-center">
+          <button id="submitBtn" class="btn btn-primary btn-lg">Submit</button>
         </div>
       </div>
-      <footer class="footer footer-transparent d-print-none">
-       
-      </footer>
     </div>
   </div>
-    <!-- 页面加载数据时显示的loading -->
-  <script type="text/javascript" src="dist/js/spin.min.js" ></script>
-  <script>
-    loadEmployee();
-    function onSuccess(response) {
-         
-        let code = response.code;
-        let dataArray = response.data;
-        if(code==0){
-          
-            let  arrSize = dataArray.length;
-            console.log('问题个数:'+arrSize);
-            questionNum = arrSize ;
-            let  divCode = "";
-            for(var i=0;i<arrSize;i++){
-                divCode = divCode + " <div class='row'>";
-                let qid =   dataArray[i].qid;
-                let title =  dataArray[i].title;
-                let content =  dataArray[i].content;
-                var arrContent = content.split("，");
-                divCode = divCode + "<p class='form-label' style='font-weight: 600;' id='"+qid+"'>" + title + "</p>";
-                divCode = divCode + "<div >"
+</div>
 
-                let labelCode ="";
-                for(var j =0 ;j<arrContent.length;j++){
-                    labelCode = labelCode + "<label class='form-check'>";
-                    
-                    let str =  arrContent[j];
-                    let arrAnswer = str.split("-");
-                    console.log("标签:"+arrAnswer[0]+", 内容:"+arrAnswer[1]); 
-                    labelCode = labelCode + "   <input class='form-check-input' type='radio' name='a"+qid+"' value='"+arrAnswer[0]+"'>";
-                    labelCode = labelCode + "<span class='form-check-label'>"+arrAnswer[1]+"</span>"
-                    labelCode = labelCode +"</label>";
-                }
-                divCode = divCode + labelCode;
-                divCode = divCode+"</div></div>";
-            }
-              
-              
-            $("#result").append(divCode);
-            $(".row").addClass("row");
-            $(".form-label").addClass("form-label required");
-            $(".form-check").addClass("form-check form-check-inline");
-            $(".form-check-input").addClass("form-check-input");
-            $(".form-check-label").addClass("form-check-label");
-        }
-    }
-    function onError(jqXHR, textStatus, errorThrown) {
-       console.log("错误：", textStatus);
-    }
-   
+<!-- 遮罩 + 进度条 -->
+<div id="submit-mask" class="mask hidden">
+  <div class="mask-box">
+    <div class="mb-2">Submitting...</div>
+    <div class="progress">
+      <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" style="width:0%">0%</div>
+    </div>
+  </div>
+</div>
 
-    function submitOnSuccess(resp) {
-      
-        //关闭spinner  
-        spinner.spin(); 
-                  
-        if(resp.code==0){
-            Swal.fire({
-                title: 'Submit Successfully',
-                text: '',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            }).then((result) => {
-                location.reload();
-            })
-            
-        } else{
-            Swal.fire( 'Tips',resp.message, 'info' );   
-        }
-    }
+<script>
+let questionNum = 0;
+let submitting = false;
 
-    function submitOnError(jqXHR, textStatus, errorThrown) {
-        //console.log("错误：", textStatus);
-        Swal.fire( 'Tips',textStatus, 'info' );
-    }
+function updateProgress(percent){
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = percent + '%';
+  bar.innerText = percent + '%';
+}
 
-     //页面加载数据时loading组件初始化
-     var opts = {            
-                lines: 13, // 花瓣数目
-                length: 0, // 花瓣长度
-                width: 10, // 花瓣宽度
-                radius: 30, // 花瓣距中心半径
-                corners: 1, // 花瓣圆滑度 (0-1)
-                rotate: 0, // 花瓣旋转角度
-                direction: 1, // 花瓣旋转方向 1: 顺时针, -1: 逆时针
-                color: '#0054a6', // 花瓣颜色
-                speed: 1, // 花瓣旋转速度
-                trail: 60, // 花瓣旋转时的拖影(百分比)
-                shadow: false, // 花瓣是否显示阴影
-                hwaccel: false, //spinner 是否启用硬件加速及高速旋转            
-                className: 'spinner', // spinner css 样式名称
-                zIndex: 2e9, // spinner的z轴 (默认是2000000000)
-                top: '50%', // spinner 相对父容器Top定位 单位 px
-                left: 'auto'// spinner 相对父容器Left定位 单位 px
-     };
-     var spinner = new Spinner(opts);
-    // 当<select>元素的值改变时触发这个函数  
-    $('#select-countries').change(function() {  
-        let countries = $(this).val(); // 获取当前选中的<option>的value  
-        console.log('Selected value is: ' + countries); 
-        loadData(countries);
-    });  
+function showMask(){
+  updateProgress(0);
+  document.getElementById('submit-mask').classList.remove('hidden');
+  document.body.classList.add('submitting'); // 禁止整个页面操作
+}
 
-    loadData(1);
-    function loadData(countries){
-        
-        $("#result").empty();
-        ajaxRequest("GET", server+"/question/answer/query-yg?countries="+countries, null, true, onSuccess, onError);
-    }
-    function submitSurvey() {
-     
-       var anwser = $('input[type="radio"]:checked').map(function() {  
-            return this.value;  
-       }).get(); 
+function hideMask(){
+  document.getElementById('submit-mask').classList.add('hidden');
+  document.body.classList.remove('submitting'); // 恢复操作
+}
 
-  
-       var count = anwser.length-1; // 这将包含已选中单选按钮值的数量  
-       console.log('答题数量:'+count); // 在控制台输出值的数量
-       // return;
+function loadEmployee(){
+  $('#employee').empty();
+  ajaxRequest('GET', server+'/employee/selectLisYg', null, true, res => {
+    const html = res.data.map((e,i)=>
+      `<label class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="emp" ${i===0?'checked':''}>
+        <span class="form-check-label">${e.name}</span>
+      </label>`
+    ).join('');
+    $('#employee').html(html);
+  });
+}
 
+function loadQuestions(lang){
+  $('#result').empty();
+  ajaxRequest('GET', server+`/question/answer/query-yg?countries=${lang}`, null, true, res => {
+    questionNum = res.data.length;
+    const html = res.data.map(q => {
+      const answers = q.content.split('，').map(a=>{
+        const [k,v] = a.split('-');
+        return `<label class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="q${q.qid}" value="${k}">
+          <span class="form-check-label">${v}</span>
+        </label>`;
+      }).join('');
+      return `<div class="mb-3"><p class="form-label required" data-qid="${q.qid}">${q.title}</p>${answers}</div>`;
+    }).join('');
+    $('#result').html(html);
+  });
+}
 
-       if( questionNum!=count){
-           Swal.fire( 'Tips','You have unanswered questions, please check.', 'info' );
-           return;
-       }
+// 切换语言
+$('#select-countries').change(e => loadQuestions(e.target.value));
 
-        var question = [];  
-      
-        // 遍历所有的p标签  
-        $('p').each(function() {  
-            // 将每个p标签的文本内容添加到数组中  
-            question.push($(this).text());  
-        });  
-        let  participants =$('input[name="radios-inline"]:checked').next('span').text(); //$("#participants").val();
-    
-      /**
-       * 获取页面中所有p标签id
-       * */
-      var qid = [];  
-      $('p').each(function() { // 遍历所有的<p>标签  
-          var id = $(this).attr('id'); // 获取当前<p>标签的id  
-          if (id) { // 如果id存在（不是undefined或空字符串）  
-             qid.push(id); // 将id添加到数组中  
-          }  
-      });
+// 提交按钮点击
+$('#submitBtn').click(async ()=>{
+  if(submitting) return; // 已提交中直接返回
 
-      //alert("pid="+paragraphIds);
-      let data={ "participants":participants, 
-                 "qid":qid.join(','), 
-                 "anwser":anwser.join(',')
-      };
-      //$("#firstDiv").text("");
-      var target = $("#firstDiv").get(0);
-      spinner.spin(target);     
-      ajaxRequest("POST", server+"/surveyResult/addYg", JSON.stringify(data), true, submitOnSuccess, submitOnError);
+  const answers = $('#result input[type=radio]:checked').map((_,e)=>e.value).get();
+  if(answers.length !== questionNum){
+    Swal.fire('Tips','You have unanswered questions','info');
+    return;
   }
 
-  function onEmployeeSuccess(response) {
-     let  dataArray =  response.data;
-     let  arrSize   =  dataArray.length;
-     let  divHtml = "";
-     for(var i=0;i<arrSize;i++){
-        let name = dataArray[i].name;
-    
-        let tmp = "";
-        if(i==0){
-            tmp = "<label class='form-check-form-check-inline'>"+
-                        "<input class='form-check-input' type='radio' value='"+i+"' name='radios-inline' checked>"+
-                        "<span class='form-check-label'>"+name+"</span>"+
-                  "</label>"
-        }else{
-            tmp = "<label class='form-check-form-check-inline'>"+
-                        "<input class='form-check-input' type='radio' value='"+i+"' name='radios-inline' >"+
-                        "<span class='form-check-label'>"+name+"</span>"+
-                  "</label>"
-        }                     
-        divHtml = divHtml + tmp;
-     }
-     $("#employee").append(divHtml);
-     $(".form-check-form-check-inline").addClass("form-check form-check-inline");
-     $(".form-check-input").addClass("form-check-input");
-     $(".form-check-label").addClass("form-check-label");
-  }
-  /////加载员工
-  function loadEmployee(){
-        
-        $("#employee").empty();
-        ajaxRequest("GET", server+"/employee/selectLisYg", null, true, onEmployeeSuccess, onError);
-  }
-  </script>
-  
-   <!-- 为了让下拉列表可以显示头像  -->
-  <script src="./dist/libs/tom-select/dist/js/tom-select.base.min.js?1692870487" defer></script>
-  <!-- Tabler Core -->
- 
-  <script>
-    // @formatter:off
-    document.addEventListener("DOMContentLoaded", function () {
-    	var el;
-    	window.TomSelect && (new TomSelect(el = document.getElementById('select-countries'), {
-    		copyClassesToDropdown: false,
-    		dropdownParent: 'body',
-    		controlInput: '<input>',
-    		render:{
-    			item: function(data,escape) {
-    				if( data.customProperties ){
-    					return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
-    				}
-    				return '<div>' + escape(data.text) + '</div>';
-    			},
-    			option: function(data,escape){
-    				if( data.customProperties ){
-    					return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
-    				}
-    				return '<div>' + escape(data.text) + '</div>';
-    			},
-    		},
-    	}));
-    });
-    // @formatter:on
-  </script>
+  submitting = true;
+  $('#submitBtn').prop('disabled', true); // 禁用按钮
+  showMask();
+
+  const qids = $('#result p[data-qid]').map((_,e)=>e.dataset.qid).get();
+  const participant = $('input[name=emp]:checked').next().text();
+  const payload = { participants: participant, qid: qids.join(','), anwser: answers.join(',') };
+
+  let percent = 0;
+  const timer = setInterval(()=>{
+    percent = Math.min(percent+10,90);
+    updateProgress(percent);
+  },300);
+
+  ajaxRequest('POST', server+'/surveyResult/addYg', JSON.stringify(payload), true,
+    res=>{
+      clearInterval(timer);
+      updateProgress(100);
+      setTimeout(()=>{
+        hideMask();
+        submitting = false;
+        $('#submitBtn').prop('disabled', false);
+        Swal.fire('Success','Submit Successfully','success').then(()=>location.reload());
+      },500);
+    },
+    ()=>{
+      clearInterval(timer);
+      hideMask();
+      submitting = false;
+      $('#submitBtn').prop('disabled', false);
+      Swal.fire('Error','Submit failed','error');
+    }
+  );
+});
+
+// 初始化
+loadEmployee();
+loadQuestions(1);
+</script>
 </body>
 </html>
